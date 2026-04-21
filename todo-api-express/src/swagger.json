@@ -1,0 +1,129 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "TODO API - Demo Contenedores",
+    "version": "1.0.0",
+    "description": "API TODO super sencilla en Express para demo de contenedores Docker en AWS"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Verifica el estado de la API y la BD",
+        "responses": {
+          "200": {
+            "description": "Servicio y base responden correctamente"
+          },
+          "500": {
+            "description": "Error de conexión o interno"
+          }
+        }
+      }
+    },
+    "/todos": {
+      "get": {
+        "summary": "Obtiene todos los TODOs",
+        "responses": {
+          "200": {
+            "description": "Lista de TODOs"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crea un nuevo TODO",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  }
+                },
+                "required": ["title"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "TODO creado"
+          },
+          "400": {
+            "description": "Datos inválidos"
+          }
+        }
+      }
+    },
+    "/todos/{id}": {
+      "put": {
+        "summary": "Actualiza un TODO existente",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "completed": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "TODO actualizado"
+          },
+          "404": {
+            "description": "TODO no encontrado"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Elimina un TODO",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Eliminado correctamente"
+          },
+          "404": {
+            "description": "TODO no encontrado"
+          }
+        }
+      }
+    }
+  }
+}
+

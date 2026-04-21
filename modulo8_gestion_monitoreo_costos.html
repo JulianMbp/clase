@@ -1,0 +1,701 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .hero {
+    padding: 2.5rem 2rem 2rem;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    margin-bottom: 2rem;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--color-background-warning);
+    color: var(--color-text-warning);
+    border-radius: var(--border-radius-md);
+    padding: 3px 10px;
+    margin-bottom: 0.75rem;
+  }
+  .hero h1 { font-size: 22px; font-weight: 500; margin-bottom: 0.4rem; }
+  .hero p { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; max-width: 580px; }
+
+  .toc {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 0 2rem 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .toc-btn {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 0.5px solid var(--color-border-secondary);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .toc-btn:hover, .toc-btn.active {
+    background: var(--color-background-secondary);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-primary);
+  }
+
+  .blocks { padding: 0 2rem 3rem; }
+
+  .block { display: none; }
+  .block.visible { display: block; }
+
+  .block-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .block-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 500;
+    flex-shrink: 0;
+  }
+  .n-blue   { background: var(--color-background-info);    color: var(--color-text-info); }
+  .n-teal   { background: #E1F5EE; color: #0F6E56; }
+  .n-amber  { background: #FAEEDA; color: #854F0B; }
+  .n-purple { background: #EEEDFE; color: #534AB7; }
+  .n-coral  { background: #FAECE7; color: #993C1D; }
+  .n-green  { background: var(--color-background-success); color: var(--color-text-success); }
+  @media (prefers-color-scheme: dark) {
+    .n-teal   { background: #04342C; color: #9FE1CB; }
+    .n-amber  { background: #412402; color: #FAC775; }
+    .n-purple { background: #26215C; color: #AFA9EC; }
+    .n-coral  { background: #4A1B0C; color: #F5C4B3; }
+  }
+  .block-title { font-size: 18px; font-weight: 500; }
+
+  .section { margin-bottom: 1.5rem; }
+  .section h3 { font-size: 15px; font-weight: 500; margin-bottom: 0.6rem; }
+  .section p  { font-size: 14px; line-height: 1.7; color: var(--color-text-secondary); margin-bottom: 0.5rem; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 0.75rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 0.75rem; }
+
+  .card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem;
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+  .card .clabel {
+    font-size: 11px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--color-text-tertiary); margin-bottom: 0.3rem;
+  }
+  .card .cval  { font-size: 14px; font-weight: 500; margin-bottom: 0.3rem; }
+  .card .cdesc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+
+  .table {
+    width: 100%; font-size: 13px; border-collapse: collapse; margin-top: 0.75rem;
+  }
+  .table th {
+    text-align: left; padding: 8px 12px;
+    font-weight: 500; font-size: 12px;
+    color: var(--color-text-secondary);
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+  .table td {
+    padding: 8px 12px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    vertical-align: top; line-height: 1.5;
+    color: var(--color-text-secondary);
+  }
+  .table tr:last-child td { border-bottom: none; }
+  .table td:first-child { font-weight: 500; color: var(--color-text-primary); }
+
+  .callout {
+    border-left: 2px solid var(--color-border-info);
+    padding: 0.75rem 1rem;
+    background: var(--color-background-info);
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+    font-size: 13px; color: var(--color-text-secondary); line-height: 1.6;
+    margin-top: 0.75rem;
+  }
+  .callout strong { color: var(--color-text-primary); font-weight: 500; }
+
+  .callout-warn {
+    border-left: 2px solid var(--color-border-warning);
+    padding: 0.75rem 1rem;
+    background: var(--color-background-warning);
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+    font-size: 13px; color: var(--color-text-secondary); line-height: 1.6;
+    margin-top: 0.75rem;
+  }
+  .callout-warn strong { color: var(--color-text-primary); font-weight: 500; }
+
+  .callout-danger {
+    border-left: 2px solid var(--color-border-danger);
+    padding: 0.75rem 1rem;
+    background: var(--color-background-danger);
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+    font-size: 13px; color: var(--color-text-secondary); line-height: 1.6;
+    margin-top: 0.75rem;
+  }
+  .callout-danger strong { color: var(--color-text-primary); font-weight: 500; }
+
+  .callout-success {
+    border-left: 2px solid var(--color-border-success);
+    padding: 0.75rem 1rem;
+    background: var(--color-background-success);
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+    font-size: 13px; color: var(--color-text-secondary); line-height: 1.6;
+    margin-top: 0.75rem;
+  }
+  .callout-success strong { color: var(--color-text-primary); font-weight: 500; }
+
+  .flow-row {
+    display: flex; align-items: center; gap: 8px;
+    flex-wrap: wrap; margin-top: 0.75rem;
+  }
+  .flow-box {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 8px 14px; font-size: 13px; font-weight: 500;
+  }
+  .flow-arr { color: var(--color-text-tertiary); font-size: 16px; }
+
+  .metric-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 0.75rem;
+  }
+  .metric-card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 0.875rem 1rem;
+    border: 0.5px solid var(--color-border-tertiary);
+    text-align: center;
+  }
+  .metric-card .mval { font-size: 22px; font-weight: 500; }
+  .metric-card .mlabel { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+  .metric-card.danger  .mval { color: var(--color-text-danger); }
+  .metric-card.success .mval { color: var(--color-text-success); }
+  .metric-card.warn    .mval { color: var(--color-text-warning); }
+
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 500;
+    padding: 2px 8px; border-radius: 12px; margin-right: 4px;
+  }
+  .bd-green   { background: var(--color-background-success); color: var(--color-text-success); }
+  .bd-red     { background: var(--color-background-danger);  color: var(--color-text-danger);  }
+  .bd-amber   { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .bd-blue    { background: var(--color-background-info);    color: var(--color-text-info);    }
+
+  .budget-box {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem 1.25rem;
+    margin-top: 0.75rem;
+  }
+  .budget-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 13px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .budget-row:last-child { border-bottom: none; font-weight: 500; }
+  .budget-row .key { color: var(--color-text-secondary); }
+  .budget-row .val { font-weight: 500; }
+  .val.over { color: var(--color-text-danger); }
+  .val.ok   { color: var(--color-text-success); }
+
+  .nav-row {
+    display: flex; gap: 8px; justify-content: flex-end;
+    margin-top: 1.5rem; padding-top: 1rem;
+    border-top: 0.5px solid var(--color-border-tertiary);
+  }
+  .nav-btn {
+    font-size: 13px; padding: 7px 16px;
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-secondary);
+    background: transparent; color: var(--color-text-primary);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .nav-btn:hover { background: var(--color-background-secondary); }
+  .nav-btn.primary {
+    background: var(--color-background-warning);
+    color: var(--color-text-warning);
+    border-color: transparent;
+  }
+  .nav-btn.primary:hover { opacity: 0.85; }
+</style>
+
+<div class="hero">
+  <div class="hero-tag">Módulo 8</div>
+  <h1>Gestión, Monitoreo, Costos y Próximos Pasos</h1>
+  <p>Clase estructurada en bloques temáticos. Navega con el índice o los botones de cada sección.</p>
+</div>
+
+<div class="toc">
+  <button class="toc-btn active"  onclick="show(0,this)">1 · Gestión de recursos</button>
+  <button class="toc-btn"         onclick="show(1,this)">2 · Monitoreo y métricas</button>
+  <button class="toc-btn"         onclick="show(2,this)">3 · Control de costos</button>
+  <button class="toc-btn"         onclick="show(3,this)">4 · Dashboards efectivos</button>
+  <button class="toc-btn"         onclick="show(4,this)">5 · Alertas financieras</button>
+  <button class="toc-btn"         onclick="show(5,this)">6 · Próximos pasos</button>
+</div>
+
+<div class="blocks">
+
+<!-- ── BLOQUE 1 ── -->
+<div class="block visible" id="b0">
+  <div class="block-header">
+    <div class="block-num n-blue">1</div>
+    <div class="block-title">Gestión de recursos en la nube</div>
+  </div>
+
+  <div class="section">
+    <h3>¿Qué es la gestión de recursos?</h3>
+    <p>Administrar recursos en la nube significa controlar el ciclo de vida de instancias, almacenamiento y redes para que la infraestructura sea eficiente, confiable y no genere gastos innecesarios. No basta con lanzar recursos — hay que supervisarlos continuamente.</p>
+  </div>
+
+  <div class="section">
+    <h3>Señales de alerta en el uso de CPU</h3>
+    <p>El uso de CPU es el indicador más inmediato del estado de una instancia. Hay dos escenarios problemáticos opuestos:</p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="clabel">Sobrecarga</div>
+        <div class="cval"><span class="badge bd-red">CPU &gt; 85%</span> sostenido</div>
+        <div class="cdesc">Indica que la instancia no tiene capacidad suficiente. Acción: escalar horizontalmente (más instancias) o verticalmente (instancia más grande).</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Sobredimensionamiento</div>
+        <div class="cval"><span class="badge bd-amber">CPU &lt; 10%</span> varios días</div>
+        <div class="cdesc">El recurso es demasiado grande para la carga real. Genera costos sin justificación. Acción: reducir tamaño o liberar la instancia.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Escalado automático</h3>
+    <p>En lugar de actuar manualmente cada vez, se configuran políticas de Auto Scaling que reaccionan a las métricas en tiempo real:</p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="clabel">Escalado horizontal</div>
+        <div class="cval">Más instancias</div>
+        <div class="cdesc">Se agregan nuevas instancias cuando la carga aumenta. Distribuye el trabajo. Ideal para aplicaciones web.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Escalado vertical</div>
+        <div class="cval">Instancia más grande</div>
+        <div class="cdesc">Se aumenta CPU/RAM de la instancia actual. Requiere reinicio. Útil para bases de datos con carga creciente.</div>
+      </div>
+    </div>
+    <div class="callout"><strong>Regla de oro:</strong> CPU sostenida por encima del 80% durante varios minutos → activa política de escalado automático. No esperes a que el servicio se caiga.</div>
+  </div>
+
+  <div class="section">
+    <h3>Recursos inactivos: el costo oculto</h3>
+    <p>Uno de los errores más comunes en la nube es dejar recursos corriendo sin uso. Ejemplos típicos:</p>
+    <table class="table">
+      <tr><th>Recurso</th><th>Problema</th><th>Acción recomendada</th></tr>
+      <tr><td>Instancia EC2 detenida</td><td>Sigue facturando el almacenamiento</td><td>Terminar si ya no se necesita</td></tr>
+      <tr><td>Volumen EBS sin instancia</td><td>Costo de almacenamiento continuo</td><td>Crear snapshot y eliminar</td></tr>
+      <tr><td>Elastic IP sin asignar</td><td>Costo por IP no utilizada</td><td>Liberar la IP</td></tr>
+      <tr><td>Load balancer vacío</td><td>Tarifa por hora aunque no tenga tráfico</td><td>Eliminar si no hay instancias activas</td></tr>
+    </table>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn primary" onclick="goNext(0)">Siguiente bloque →</button>
+  </div>
+</div>
+
+<!-- ── BLOQUE 2 ── -->
+<div class="block" id="b1">
+  <div class="block-header">
+    <div class="block-num n-teal">2</div>
+    <div class="block-title">Monitoreo y métricas clave</div>
+  </div>
+
+  <div class="section">
+    <h3>¿Por qué monitorear?</h3>
+    <p>El monitoreo convierte datos brutos de infraestructura en información accionable. Sin él, los problemas solo se detectan cuando el usuario ya los está sufriendo.</p>
+  </div>
+
+  <div class="section">
+    <h3>Categorías de métricas</h3>
+    <div class="grid-3">
+      <div class="card">
+        <div class="clabel">Rendimiento</div>
+        <div class="cdesc">CPU, RAM, red, disco. Dicen si la infraestructura tiene la capacidad adecuada.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Disponibilidad</div>
+        <div class="cdesc">Uptime / downtime. Porcentaje del tiempo que el servicio está operativo.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Latencia</div>
+        <div class="cdesc">Tiempo de respuesta promedio. Alta latencia indica cuellos de botella.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Errores</div>
+        <div class="cdesc">Tasa de errores HTTP (4xx, 5xx). Indican fallos en la aplicación o infraestructura.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Tráfico</div>
+        <div class="cdesc">Solicitudes por segundo (RPS). Ayuda a anticipar necesidades de escalado.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Costo</div>
+        <div class="cdesc">Gasto por servicio, región o proyecto. Clave para optimización financiera.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Métricas de disponibilidad</h3>
+    <p>La disponibilidad es la métrica más importante para acuerdos de nivel de servicio (SLA). Se calcula así:</p>
+    <div class="budget-box">
+      <div class="budget-row"><span class="key">Fórmula</span><span class="val">Disponibilidad = (Tiempo activo / Tiempo total) × 100</span></div>
+      <div class="budget-row"><span class="key">99.9% ("tres nueves")</span><span class="val">~8.7 h de downtime al año</span></div>
+      <div class="budget-row"><span class="key">99.99% ("cuatro nueves")</span><span class="val">~52 min de downtime al año</span></div>
+      <div class="budget-row"><span class="key">99.999% ("cinco nueves")</span><span class="val">~5 min de downtime al año</span></div>
+    </div>
+    <div class="callout"><strong>Latencia + uptime juntos</strong> son la señal más completa de salud del servicio. Un servicio puede estar "activo" pero con latencia inaceptable — ambas métricas deben estar en el dashboard.</div>
+  </div>
+
+  <div class="section">
+    <h3>Herramientas de monitoreo en AWS</h3>
+    <table class="table">
+      <tr><th>Herramienta</th><th>¿Qué monitorea?</th></tr>
+      <tr><td>Amazon CloudWatch</td><td>Métricas de EC2, RDS, Lambda, S3. Logs, alarmas y dashboards.</td></tr>
+      <tr><td>AWS X-Ray</td><td>Trazabilidad distribuida entre microservicios. Detecta cuellos de botella.</td></tr>
+      <tr><td>AWS Health Dashboard</td><td>Estado de los servicios de AWS en tu región en tiempo real.</td></tr>
+      <tr><td>AWS Trusted Advisor</td><td>Recomendaciones de rendimiento, seguridad y costos.</td></tr>
+    </table>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" onclick="goPrev(1)">← Anterior</button>
+    <button class="nav-btn primary" onclick="goNext(1)">Siguiente bloque →</button>
+  </div>
+</div>
+
+<!-- ── BLOQUE 3 ── -->
+<div class="block" id="b2">
+  <div class="block-header">
+    <div class="block-num n-amber">3</div>
+    <div class="block-title">Control y optimización de costos</div>
+  </div>
+
+  <div class="section">
+    <h3>¿Cómo se generan los sobrecostos?</h3>
+    <p>Los costos en la nube crecen por tres razones principales: recursos inactivos que siguen corriendo, recursos sobredimensionados para la carga real, y falta de visibilidad sobre qué genera el gasto.</p>
+    <div class="callout-warn"><strong>Señal de alerta:</strong> costos aumentando sin que la demanda haya crecido → lo primero es revisar reportes de uso, no aumentar el presupuesto.</div>
+  </div>
+
+  <div class="section">
+    <h3>Tipos de instancias para reducir costos</h3>
+    <table class="table">
+      <tr><th>Tipo</th><th>Descripción</th><th>Ahorro típico</th><th>Cuándo usarlo</th></tr>
+      <tr>
+        <td>On-Demand</td>
+        <td>Precio normal, sin compromiso</td>
+        <td>—</td>
+        <td>Cargas impredecibles, pruebas</td>
+      </tr>
+      <tr>
+        <td>Reserved</td>
+        <td>Compromiso 1 o 3 años</td>
+        <td>Hasta 72%</td>
+        <td>Cargas estables y predecibles</td>
+      </tr>
+      <tr>
+        <td>Savings Plans</td>
+        <td>Compromiso de gasto/hora flexible</td>
+        <td>Hasta 66%</td>
+        <td>Cargas estables con cierta variabilidad</td>
+      </tr>
+      <tr>
+        <td>Spot</td>
+        <td>Capacidad sobrante de AWS</td>
+        <td>Hasta 90%</td>
+        <td>Cargas tolerantes a interrupciones (batch, CI/CD)</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h3>Data Lifecycle Management (DLM)</h3>
+    <p>El almacenamiento es una fuente silenciosa de costos crecientes. La política de ciclo de vida automatiza el movimiento de datos hacia niveles más económicos según su antigüedad:</p>
+    <div class="flow-row">
+      <div class="flow-box">Datos activos<br><span style="font-size:11px;color:var(--color-text-tertiary);">S3 Standard</span></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box">Acceso infrecuente<br><span style="font-size:11px;color:var(--color-text-tertiary);">S3 Infrequent Access</span></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box">Archivo frío<br><span style="font-size:11px;color:var(--color-text-tertiary);">S3 Glacier</span></div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box">Eliminación<br><span style="font-size:11px;color:var(--color-text-tertiary);">Expiración</span></div>
+    </div>
+    <div class="callout"><strong>Ejemplo:</strong> logs de hace más de 90 días raramente se consultan. Moverlos a Glacier reduce el costo de almacenamiento hasta un 80% sin perder los datos.</div>
+  </div>
+
+  <div class="section">
+    <h3>Análisis de costo por servicio</h3>
+    <p>Desagregar el gasto por servicio, equipo o proyecto permite identificar dónde hay ineficiencias y asignar presupuestos con precisión. Herramientas clave en AWS:</p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="clabel">AWS Cost Explorer</div>
+        <div class="cdesc">Visualiza el gasto histórico por servicio, región o etiqueta (tag). Detecta tendencias y anomalías.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">AWS Budgets</div>
+        <div class="cdesc">Define presupuestos por servicio o proyecto y recibe alertas cuando se supera un umbral.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Cost Allocation Tags</div>
+        <div class="cdesc">Etiqueta los recursos por equipo, proyecto o entorno para ver el costo de cada uno por separado.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Trusted Advisor</div>
+        <div class="cdesc">Detecta instancias infrautilizadas, volúmenes sin uso e IPs sin asignar que generan gasto innecesario.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" onclick="goPrev(2)">← Anterior</button>
+    <button class="nav-btn primary" onclick="goNext(2)">Siguiente bloque →</button>
+  </div>
+</div>
+
+<!-- ── BLOQUE 4 ── -->
+<div class="block" id="b3">
+  <div class="block-header">
+    <div class="block-num n-purple">4</div>
+    <div class="block-title">Dashboards de monitoreo efectivos</div>
+  </div>
+
+  <div class="section">
+    <h3>¿Qué hace efectivo a un dashboard?</h3>
+    <p>Un dashboard no es un volcado de datos — es una herramienta de decisión. Su objetivo es que cualquier persona con acceso pueda entender el estado del sistema en menos de 30 segundos.</p>
+  </div>
+
+  <div class="section">
+    <h3>Buenas prácticas de diseño</h3>
+    <div class="grid-2">
+      <div class="card">
+        <div class="clabel" style="color:var(--color-text-success);">Hacer</div>
+        <div class="cdesc" style="margin-top:0.4rem;">
+          Usar gráficos de líneas para tendencias en el tiempo.<br><br>
+          Usar barras para comparar servicios o periodos.<br><br>
+          Usar indicadores (gauges) para métricas con umbral crítico.<br><br>
+          Agrupar métricas por categoría (rendimiento, costos, disponibilidad).<br><br>
+          Usar colores con significado: rojo = alerta, verde = OK, amarillo = advertencia.
+        </div>
+      </div>
+      <div class="card">
+        <div class="clabel" style="color:var(--color-text-danger);">No hacer</div>
+        <div class="cdesc" style="margin-top:0.4rem;">
+          Usar muchos colores sin un patrón definido.<br><br>
+          Mostrar todos los datos sin filtros ni agrupación.<br><br>
+          Incluir solo texto descriptivo sin visualizaciones.<br><br>
+          Mezclar métricas de rendimiento con métricas financieras sin separación clara.<br><br>
+          Ignorar la jerarquía visual — lo más crítico debe verse primero.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Estructura recomendada de un dashboard</h3>
+    <table class="table">
+      <tr><th>Sección</th><th>Métricas incluidas</th><th>Tipo de gráfico</th></tr>
+      <tr><td>Estado general</td><td>Uptime, errores activos, alertas abiertas</td><td>Indicadores de semáforo</td></tr>
+      <tr><td>Rendimiento</td><td>CPU, RAM, latencia, RPS</td><td>Líneas de tiempo</td></tr>
+      <tr><td>Disponibilidad</td><td>% uptime últimos 30 días, incidentes</td><td>Barra de disponibilidad</td></tr>
+      <tr><td>Costos</td><td>Gasto actual vs presupuesto, top 5 servicios</td><td>Barras + gauge de % usado</td></tr>
+      <tr><td>Almacenamiento</td><td>Uso por bucket/volumen, datos sin acceder</td><td>Barras apiladas</td></tr>
+    </table>
+    <div class="callout"><strong>Principio de jerarquía:</strong> las alertas críticas deben aparecer en la parte superior del dashboard. Un operador que abre el panel a las 2 AM debe ver el problema en la primera pantalla, no después de hacer scroll.</div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" onclick="goPrev(3)">← Anterior</button>
+    <button class="nav-btn primary" onclick="goNext(3)">Siguiente bloque →</button>
+  </div>
+</div>
+
+<!-- ── BLOQUE 5 ── -->
+<div class="block" id="b4">
+  <div class="block-header">
+    <div class="block-num n-coral">5</div>
+    <div class="block-title">Alertas financieras y gestión de presupuesto</div>
+  </div>
+
+  <div class="section">
+    <h3>¿Para qué sirven las alertas financieras?</h3>
+    <p>Las alertas automáticas convierten el monitoreo reactivo (descubrir el problema después) en monitoreo preventivo (actuar antes de que el costo se salga de control). Permiten tomar decisiones antes de que el gasto supere el presupuesto.</p>
+  </div>
+
+  <div class="section">
+    <h3>Interpretando el presupuesto vs gasto real</h3>
+    <p>Ejemplo práctico de lectura de un dashboard financiero:</p>
+    <div class="budget-box">
+      <div class="budget-row"><span class="key">Presupuesto mensual establecido</span><span class="val">$1.200</span></div>
+      <div class="budget-row"><span class="key">Gasto real del mes</span><span class="val over">$1.500</span></div>
+      <div class="budget-row"><span class="key">Diferencia (sobrecosto)</span><span class="val over">+ $300 (25% sobre el límite)</span></div>
+      <div class="budget-row"><span class="key">Acción recomendada</span><span class="val">Revisar recursos sobredimensionados y políticas de apagado automático</span></div>
+    </div>
+    <div class="callout-danger"><strong>Error frecuente:</strong> aumentar el presupuesto para "cubrir" el sobrecosto sin investigar su causa. El sobrecosto es un síntoma — el problema suele ser recursos inactivos o sobredimensionados.</div>
+  </div>
+
+  <div class="section">
+    <h3>Configuración de alertas recomendada</h3>
+    <table class="table">
+      <tr><th>Umbral</th><th>Tipo de alerta</th><th>Acción esperada</th></tr>
+      <tr>
+        <td><span class="badge bd-amber">50%</span> del presupuesto</td>
+        <td>Notificación informativa</td>
+        <td>Revisar tendencia, verificar que el gasto sea esperado</td>
+      </tr>
+      <tr>
+        <td><span class="badge bd-amber">80%</span> del presupuesto</td>
+        <td>Alerta de advertencia</td>
+        <td>Revisar recursos activos, considerar reducción o apagado de no críticos</td>
+      </tr>
+      <tr>
+        <td><span class="badge bd-red">100%</span> del presupuesto</td>
+        <td>Alerta crítica</td>
+        <td>Escalar al equipo de decisión, actuar inmediatamente sobre los mayores consumidores</td>
+      </tr>
+      <tr>
+        <td>CPU &gt; 85% sostenida</td>
+        <td>Alerta de rendimiento</td>
+        <td>Revisar política de escalado o aumentar tamaño de instancia</td>
+      </tr>
+      <tr>
+        <td>CPU &lt; 10% por 3+ días</td>
+        <td>Recomendación de ahorro</td>
+        <td>Considerar reducir el tamaño de la instancia (rightsizing)</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h3>Políticas de apagado automático</h3>
+    <p>Una práctica sencilla con gran impacto: programar el apagado automático de entornos no productivos fuera del horario laboral. Un entorno de desarrollo que corre 24/7 puede reducirse a 8h/día de uso real.</p>
+    <div class="metric-row">
+      <div class="metric-card warn">
+        <div class="mval">24h</div>
+        <div class="mlabel">Encendido sin política</div>
+      </div>
+      <div class="metric-card success">
+        <div class="mval">8h</div>
+        <div class="mlabel">Con apagado automático</div>
+      </div>
+      <div class="metric-card success">
+        <div class="mval">~67%</div>
+        <div class="mlabel">Reducción de costo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" onclick="goPrev(4)">← Anterior</button>
+    <button class="nav-btn primary" onclick="goNext(4)">Siguiente bloque →</button>
+  </div>
+</div>
+
+<!-- ── BLOQUE 6 ── -->
+<div class="block" id="b5">
+  <div class="block-header">
+    <div class="block-num n-green">6</div>
+    <div class="block-title">Próximos pasos: hacia una nube eficiente</div>
+  </div>
+
+  <div class="section">
+    <h3>Hoja de ruta para una gestión madura</h3>
+    <p>La madurez en la gestión cloud no se logra de un día para otro. Hay niveles progresivos que las organizaciones recorren:</p>
+    <table class="table">
+      <tr><th>Nivel</th><th>Características</th><th>Foco principal</th></tr>
+      <tr>
+        <td><span class="badge bd-amber">Básico</span></td>
+        <td>Monitoreo manual, sin alertas automáticas, revisión periódica de costos</td>
+        <td>Visibilidad inicial</td>
+      </tr>
+      <tr>
+        <td><span class="badge bd-blue">Intermedio</span></td>
+        <td>Dashboards configurados, alertas activas, políticas de escalado definidas</td>
+        <td>Reacción rápida a problemas</td>
+      </tr>
+      <tr>
+        <td><span class="badge bd-green">Avanzado</span></td>
+        <td>FinOps implementado, rightsizing automatizado, DLM activo, presupuestos por equipo</td>
+        <td>Prevención y optimización continua</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h3>Mejores prácticas consolidadas</h3>
+    <div class="grid-2">
+      <div class="card">
+        <div class="clabel">Rendimiento</div>
+        <div class="cdesc">Configurar Auto Scaling con umbrales de CPU entre 60-80%. Revisar rightsizing mensualmente. Usar instancias reservadas para cargas estables.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Disponibilidad</div>
+        <div class="cdesc">Definir SLA mínimo (99.9% recomendado). Monitorear latencia y uptime juntos. Configurar health checks en load balancers.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Costos</div>
+        <div class="cdesc">Etiquetar todos los recursos por proyecto/equipo. Activar AWS Budgets con alertas en 50%, 80% y 100%. Revisar Cost Explorer semanalmente.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Almacenamiento</div>
+        <div class="cdesc">Implementar políticas de ciclo de vida en S3. Mover datos de más de 90 días a Glacier. Eliminar snapshots y volúmenes sin uso.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Seguridad</div>
+        <div class="cdesc">Usar IAM con mínimo privilegio. Activar CloudTrail para auditoría. Revisar Security Hub regularmente para detectar configuraciones riesgosas.</div>
+      </div>
+      <div class="card">
+        <div class="clabel">Automatización</div>
+        <div class="cdesc">Apagado automático en entornos dev/staging fuera de horario. Usar Infrastructure as Code (IaC) para reproducir entornos de forma consistente.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Resumen del módulo</h3>
+    <div class="callout-success">
+      <strong>Lo más importante del módulo 8:</strong> los dashboards no son un fin en sí mismos — son herramientas de decisión. El monitoreo sin alertas es ruido. Las alertas sin presupuesto son solo números. La gestión efectiva une métricas de rendimiento, disponibilidad y costo en una visión única que permite actuar antes de que los problemas impacten al usuario o al presupuesto.
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn" onclick="goPrev(5)">← Anterior</button>
+    <button class="nav-btn" onclick="show(0,document.querySelectorAll('.toc-btn')[0])">↩ Volver al inicio</button>
+  </div>
+</div>
+
+</div><!-- /blocks -->
+
+<script>
+  let cur = 0;
+  const N = 6;
+  function show(idx, btn) {
+    document.querySelectorAll('.block').forEach(b => b.classList.remove('visible'));
+    document.getElementById('b'+idx).classList.add('visible');
+    document.querySelectorAll('.toc-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    else document.querySelectorAll('.toc-btn')[idx].classList.add('active');
+    cur = idx;
+    window.scrollTo(0,0);
+  }
+  function goNext(i){ if(i+1<N) show(i+1,null); }
+  function goPrev(i){ if(i-1>=0) show(i-1,null); }
+</script>
